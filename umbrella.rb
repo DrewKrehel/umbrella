@@ -5,6 +5,7 @@ require "dotenv/load"
 puts "where are you located?"
 user_location = gets.chomp 
 # user_location = "Chicago"
+# user_location = "Philidelphia"
 pp user_location
 
 maps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + user_location + "&key=" + ENV.fetch("GMAPS_KEY")
@@ -32,3 +33,18 @@ parsed_response = JSON.parse(raw_response)
 currently_hash = parsed_response.fetch("currently")
 current_temp = currently_hash.fetch("temperature")
 puts "The current temperature is " + current_temp.to_s + "."
+
+next_hour = currently_hash.fetch("summary")
+puts "Next hour: " + next_hour
+
+forcast = currently_hash.fetch("precipType")
+case forcast
+when "rain"
+  puts "Bring an umbrella."
+when "snow"
+  puts "Bring snow boots."
+when "sleet"
+  puts "Don't slip."
+else
+  puts "You probably won't need an umbrella."
+end
