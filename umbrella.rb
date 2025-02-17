@@ -1,11 +1,13 @@
 require "http"
 require "json"
 require "dotenv/load"
+require "ascii_charts"
 
 puts "where are you located?"
-user_location = gets.chomp 
+# user_location = gets.chomp 
 # user_location = "Chicago"
 # user_location = "Philidelphia"
+user_location = "Seattle"
 pp user_location
 
 maps_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + user_location + "&key=" + ENV.fetch("GMAPS_KEY")
@@ -48,3 +50,12 @@ when "sleet"
 else
   puts "You probably won't need an umbrella."
 end
+
+puts "\nHours from now vs Precipitation probability"
+hourly_hash = parsed_response.fetch("hourly")
+hour_data = hourly_hash.fetch("data")
+next_12_hours = hour_data[0..11]
+# hour_precip = hour_data[0].fetch("precipProbability")
+precip_array = next_12_hours.map {|hour| hour.fetch("precipProbability")}
+chart_array = precip_array.each_with_index.map {|data, index| [index+1, data]}
+puts AsciiCharts::Cartesian.new(chart_array, :bar => true, :hide_zero => true).draw
